@@ -1,16 +1,17 @@
 import librosa
 import time
+from menu import filename
 
 start_time = time.time()
 
 #Название файла с песней
-song_name = 'testsong2.wav'
+song_name = filename
 #Чем ниже коэффициент k, тем строже отбор нот
 k = 0.77
 #Минимальная частота смены нот (в миллисекундах)
 too_fast = 200
 
-
+print("Song analysis started!")
 x, sr = librosa.load(song_name)
 X = librosa.stft(x)
 Xdb = librosa.amplitude_to_db(abs(X))
@@ -47,7 +48,7 @@ for i in range(len(timearr)-1):
     if timearr[i+1] - timearr[i] < too_fast:
         timearr[i+1] = timearr[i]
 
-print(timearr)
+#print(timearr)
 
 print("Song analysis time: ", time.time() - start_time, " seconds")
 print("Song analysis time per 1 second: ", (time.time() - start_time) / (len(times) * 0.023), " seconds")
