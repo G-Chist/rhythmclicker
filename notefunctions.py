@@ -1,8 +1,11 @@
 import time
 import random
-from exterior import *
+import tkinter
+
+from clickerexterior import *
 from pygame import mixer
 from songanalyzer import *
+from menu import *
 
 def rgbtohex(r,g,b):
     r = int(r)
@@ -70,27 +73,33 @@ def playGame(gamearr, timeout, waiting):
     tcount = 0
 
     mixer.music.play()
+    playing = True
 
     # Основной цикл
-    while time.time()*1000 - start_time <= timeout*1000:
-        root.update()
+    while time.time()*1000 - start_time <= timeout*1000 and playing:
 
-        currtime = time.time() * 1000
+        try:
+            root.update()
 
-        if int(currtime - start_time) in gamearr:
+            currtime = time.time() * 1000
 
-            for i in button_array:
-                i.configure(bg="white")
+            if int(currtime - start_time) in gamearr:
 
-            rb = random.randint(0, 8)
-            while rb == prevrb:
+                for i in button_array:
+                    i.configure(bg="white")
+
                 rb = random.randint(0, 8)
+                while rb == prevrb:
+                    rb = random.randint(0, 8)
 
-            btn_start_time = time.time()*1000
-            prevrb = rb
-            clicked_array = [False, False, False, False, False, False, False, False, False]
+                btn_start_time = time.time()*1000
+                prevrb = rb
+                clicked_array = [False, False, False, False, False, False, False, False, False]
 
-        # Кнопка меняет цвет со временем
-        if prevrb >= 0 and not clicked_array[rb]:
-            diff = int(time.time()*1000 - btn_start_time)
-            button_array[prevrb].configure(bg=rgbtohex(0 + diff / 4, 255 - diff / 4, 0))
+            # Кнопка меняет цвет со временем
+            if prevrb >= 0 and not clicked_array[rb]:
+                diff = int(time.time()*1000 - btn_start_time)
+                button_array[prevrb].configure(bg=rgbtohex(0 + diff / 4, 255 - diff / 4, 0))
+
+        except tkinter.TclError:
+            playing = False
