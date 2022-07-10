@@ -2,11 +2,17 @@ from menu import *
 
 summon_menu()
 
-from clickerexterior import *
-from notefunctions import *
-from songanalyzer import *
-from menu import *
+from menu import gameactive
 
-playGame(gamearr=timearr, timeout=times[-1], waiting=2)
+if gameactive:
 
-print("Game finished!")
+    from clickerexterior import *
+    from notefunctions import *
+    from songanalyzer import *
+    from menu import *
+
+    playGame(gamearr=timearr, timeout=times[-1], waiting=2)
+
+    print("Game finished!")
+
+print("Game exited")
