@@ -1,19 +1,25 @@
 import tkinter as tk
+
+import keyboard
 import librosa
 import time
 import random
 import pygame.mixer as mixer
 import tkinter.filedialog as fd
+import keyword
 
 gameactive = True
 filename = False
+menuactive = True
 waiting = 3
 
 while gameactive:
 
     def exitgame():
         global gameactive
+        global menuactive
         gameactive = False
+        menuactive = False
         menuwindow.destroy()
 
     def choosing():
@@ -38,15 +44,17 @@ while gameactive:
 
 
     def on_closing():
+        global gameactive
+        global menuactive
         if tk.messagebox.askokcancel("Quit", "Do you want to quit?"):
-            global gameactive
             gameactive = False
+            menuactive = False
             menuwindow.destroy()
 
 
     menuwindow.protocol("WM_DELETE_WINDOW", on_closing)
 
-    while not filename:
+    while not filename and menuactive:
         try:
             menuwindow.update()
         except tk.TclError:
@@ -114,15 +122,19 @@ while gameactive:
         btnscore = tk.Button(root, width=30, height=2, text="0", font=("Arial", "14"))
         btnscore.grid(row=1, column=1, columnspan=3)
 
-        btn1 = tk.Button(root, width=16, height=8)
-        btn2 = tk.Button(root, width=16, height=8)
-        btn3 = tk.Button(root, width=16, height=8)
-        btn4 = tk.Button(root, width=16, height=8)
-        btn5 = tk.Button(root, width=16, height=8)
-        btn6 = tk.Button(root, width=16, height=8)
-        btn7 = tk.Button(root, width=16, height=8)
-        btn8 = tk.Button(root, width=16, height=8)
-        btn9 = tk.Button(root, width=16, height=8)
+        btn1 = tk.Button(root, width=8, height=4, text="Q")
+        btn2 = tk.Button(root, width=8, height=4, text="W")
+        btn3 = tk.Button(root, width=8, height=4, text="E")
+        btn4 = tk.Button(root, width=8, height=4, text="A")
+        btn5 = tk.Button(root, width=8, height=4, text="S")
+        btn6 = tk.Button(root, width=8, height=4, text="D")
+        btn7 = tk.Button(root, width=8, height=4, text="Z")
+        btn8 = tk.Button(root, width=8, height=4, text="X")
+        btn9 = tk.Button(root, width=8, height=4, text="C")
+
+        keys_array = ['q', 'w', 'e',
+                      'a', 's', 'd',
+                      'z', 'x', 'c']
 
         button_array = [btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9]
 
@@ -132,6 +144,7 @@ while gameactive:
             for j in range(1, 4):
                 button_array[c].grid(row=i, column=j)
                 button_array[c].configure(bg="white")
+                button_array[c].configure(font=("Arial", "16"))
                 c += 1
 
 
@@ -167,18 +180,21 @@ while gameactive:
                 btnscore.configure(text=str(n - int((time.time() * 1000 - start_time) / 1000)))
             btnscore.configure(text="0")
 
-
+        last_clicked = 0
         def clicked(a):
-            print("Button ", a, " clicked")
-            clicked_array[a - 1] = True
-            try:
-                # Если нажата нужная кнопка, добавляются очки
-                if a - 1 == rb:
-                    clicktime = int(time.time() * 1000 - btn_start_time)
-                    currscore = int(btnscore["text"])
-                    btnscore.configure(text=str(1000 - clicktime + currscore))
-            except NameError:
-                pass
+            global last_clicked
+            if time.time() * 1000 - last_clicked > too_fast:
+                print("Button ", a, " clicked")
+                clicked_array[a - 1] = True
+                try:
+                    # Если нажата нужная кнопка, добавляются очки
+                    if a - 1 == rb:
+                        clicktime = int(time.time() * 1000 - btn_start_time)
+                        currscore = int(btnscore["text"])
+                        btnscore.configure(text=str(1000 - clicktime + currscore))
+                except NameError:
+                    pass
+            last_clicked = time.time() * 1000
 
 
         btn1.configure(command=lambda: clicked(1))
@@ -213,6 +229,12 @@ while gameactive:
 
             try:
                 root.update()
+
+                cou = 0
+                for j in button_array:
+                    cou += 1
+                    if keyboard.is_pressed(j['text']):
+                        clicked(cou)
 
                 currtime = time.time() * 1000
 
