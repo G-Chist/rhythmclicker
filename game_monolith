@@ -6,7 +6,6 @@ import time
 import random
 import pygame.mixer as mixer
 import tkinter.filedialog as fd
-import keyword
 
 gameactive = True
 filename = False
