@@ -182,7 +182,7 @@ while gameactive:
         last_clicked = 0
         def clicked(a):
             global last_clicked
-            if time.time() * 1000 - last_clicked > too_fast:
+            if not clicked_array[rb]:
                 print("Button ", a, " clicked")
                 clicked_array[a - 1] = True
                 try:
@@ -259,6 +259,7 @@ while gameactive:
                 playing = False
                 mixer.music.stop()
                 mixer.music.unload()
+                break
 
     print("Game finished!")
 
